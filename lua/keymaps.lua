@@ -1,30 +1,83 @@
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
--- when use leader p in visual mode, delete highlighted content(not overwriting an registers) and pastes over it
-vim.keymap.set('x', '<leader>p', [["_dP]])
+-- When use leader p in visual mode, delete highlighted content (not overwriting any registers) and paste over it
+vim.keymap.set('x', '<leader>p', [["_dP]], { desc = 'Delete and paste without overwriting register' })
 
--- deletes to _(discard) register
-vim.keymap.set({ 'n', 'v' }, '<leader>d', '"_d')
+-- Deletes to _(discard) register
+vim.keymap.set({ 'n', 'v' }, '<leader>d', '"_d', { desc = 'Delete to the black hole register' })
 
--- next greatest remap ever : asbjornHaland
-vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
-vim.keymap.set('n', '<leader>Y', [["+Y]])
+-- Next greatest remap ever : asbjornHaland
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = 'Yank to system clipboard' })
+vim.keymap.set('n', '<leader>Y', [["+Y]], { desc = 'Yank line to system clipboard' })
 
--- format current buffer(file)
-vim.keymap.set('n', '<leader>f', vim.lsp.buf.format)
+-- Format current buffer (file)
+vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, { desc = 'Format current buffer' })
 
--- makes current file executable
-vim.keymap.set('n', '<leader>x', '<cmd>!chmod +x %<CR>', { silent = true })
+-- Makes current file executable
+vim.keymap.set('n', '<leader>x', '<cmd>!chmod +x %<CR>', { silent = true, desc = 'Make file executable' })
 
--- clear highlighted text on search
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+-- Clear highlighted text on search
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 
 -- Example: Alt-based navigation
-vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-j>', '<C-w>j', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-k>', '<C-w>k', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-l>', '<C-w>l', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true, silent = true, desc = 'Move to the left window' })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { noremap = true, silent = true, desc = 'Move to the window below' })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { noremap = true, silent = true, desc = 'Move to the window above' })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { noremap = true, silent = true, desc = 'Move to the right window' })
+
+-- Zoom in (maximize the current window without closing others)
+vim.keymap.set('n', '<leader>z', '<C-w>|<C-w>_', { desc = 'Zoom current window' })
+
+-- Restore the layout (equalize split sizes)
+vim.keymap.set('n', '<leader>Z', ':wincmd =<CR>', { desc = 'Restore window layout' })
+
+-- Quickfix and Location List Key Mappings for Neovim
+-- These mappings use Lua API for better maintainability
+
+-- Quickfix Mappings
+local quickfix_mappings = {
+  { mode = 'n', lhs = '<leader>qo', rhs = ':copen<CR>', desc = 'Open Quickfix List' },
+  { mode = 'n', lhs = '<leader>qc', rhs = ':cclose<CR>', desc = 'Close Quickfix List' },
+  { mode = 'n', lhs = '<leader>qn', rhs = ':cnext<CR>zz', desc = 'Next Quickfix Item' },
+  { mode = 'n', lhs = '<leader>qp', rhs = ':cprev<CR>zz', desc = 'Previous Quickfix Item' },
+  { mode = 'n', lhs = '<leader>qf', rhs = ':cfirst<CR>', desc = 'First Quickfix Item' },
+  { mode = 'n', lhs = '<leader>ql', rhs = ':clast<CR>', desc = 'Last Quickfix Item' },
+  {
+    mode = 'n',
+    lhs = '<leader>qcl',
+    rhs = function()
+      vim.fn.setqflist {}
+    end,
+    desc = 'Clear Quickfix List',
+  },
+  { mode = 'n', lhs = '<leader>qt', rhs = ':cwindow<CR>', desc = 'Toggle Quickfix List' },
+}
+
+-- Location List Mappings
+local location_list_mappings = {
+  { mode = 'n', lhs = '<leader>lo', rhs = ':lopen<CR>', desc = 'Open Location List' },
+  { mode = 'n', lhs = '<leader>lc', rhs = ':lclose<CR>', desc = 'Close Location List' },
+  { mode = 'n', lhs = '<leader>ln', rhs = ':lnext<CR>zz', desc = 'Next Location List Item' },
+  { mode = 'n', lhs = '<leader>lp', rhs = ':lprev<CR>zz', desc = 'Previous Location List Item' },
+  { mode = 'n', lhs = '<leader>lt', rhs = ':lwindow<CR>', desc = 'Toggle Location List' },
+}
+
+-- Function to set key mappings
+local function set_keymaps(mappings)
+  for _, map in ipairs(mappings) do
+    vim.keymap.set(map.mode, map.lhs, map.rhs, { desc = map.desc })
+  end
+end
+
+-- Apply the mappings
+set_keymaps(quickfix_mappings)
+set_keymaps(location_list_mappings)
+
+-- Notes:
+-- Replace <leader> with your preferred leader key (e.g., ',' or ' ').
+-- "zz" centers the cursor after jumping to the next/previous item.
+-- Modify the mappings as per your workflow and preferences.
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
