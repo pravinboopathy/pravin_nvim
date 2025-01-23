@@ -32,4 +32,5 @@ o.wrap = false -- disable line wrap
 o.virtualedit = "block" -- fixes stange behavior with unequal line lengths in visual block mode
 o.inccommand = "split" -- shows line number on previews
 o.termguicolors = true -- enables wider variety of colors
+o.updatetime = 100 -- faster completion
 -- stylua: ignore end
