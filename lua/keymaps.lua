@@ -32,6 +32,12 @@ vim.keymap.set('n', '<leader>z', '<C-w>|<C-w>_', { desc = 'Zoom current window' 
 -- Restore the layout (equalize split sizes)
 vim.keymap.set('n', '<leader>Z', ':wincmd =<CR>', { desc = 'Restore window layout' })
 
+-- Jump to first non empty space in the line
+vim.keymap.set({'n', 'v'}, '<leader>b', '^', { noremap = true, silent = true })
+
+-- Jump to last non empty space character in line
+vim.keymap.set({'n', 'v'}, '<leader>e', 'g_', { noremap = true, silent = true })
+
 -- Quickfix and Location List Key Mappings for Neovim
 -- These mappings use Lua API for better maintainability
 
