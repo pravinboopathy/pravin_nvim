@@ -26,7 +26,7 @@ return {
         end, 50) -- Delay for 50ms to allow the filetype to load
       end,
     })
-    vim.keymap.set('n', '<leader>cc', ':CodeCompanionChat<CR>', { noremap = true, silent = true })
-    vim.keymap.set('n', '<leader>ci', ':CodeCompanion<CR>', { noremap = true, silent = true })
+    vim.keymap.set({ 'n', 'v' }, '<leader>cc', ':CodeCompanionChat<CR>', { noremap = true, silent = true })
+    vim.keymap.set({ 'n', 'v' }, '<leader>ci', ':CodeCompanion<CR>', { noremap = true, silent = true })
   end,
 }

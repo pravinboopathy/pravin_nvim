@@ -1,25 +1,39 @@
 return {
-  { -- Highlight, edit, and navigate code
+  { -- Treesitter main module
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+    main = 'nvim-treesitter.configs',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects', -- Ensure Textobjects are installed
+    },
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go' },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'cpp',
+        'diff',
+        'html',
+        'javascript',
+        'typescript',
+        'lua',
+        'luadoc',
+        'json',
+        'yaml',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'go',
+        'python',
       },
+      auto_install = true,
+      highlight = { enable = true, additional_vim_regex_highlighting = { 'ruby' } },
       indent = { enable = true, disable = { 'ruby' } },
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = '<Leader>ss', -- set to `false` to disable one of the mappings
+          init_selection = '<Leader>ss',
           node_incremental = '<Leader>si',
           scope_incremental = '<Leader>sc',
           node_decremental = '<Leader>sd',
@@ -28,63 +42,94 @@ return {
       textobjects = {
         select = {
           enable = true,
-
-          -- Automatically jump forward to textobj, similar to targets.vim
           lookahead = true,
-
           keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
             ['af'] = '@function.outer',
             ['if'] = '@function.inner',
             ['ac'] = '@class.outer',
-            -- You can optionally set descriptions to the mappings (used in the desc parameter of
-            -- nvim_buf_set_keymap) which plugins like which-key display
             ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class region' },
-            -- You can also use captures from other query groups like `locals.scm`
             ['as'] = { query = '@local.scope', query_group = 'locals', desc = 'Select language scope' },
           },
-          -- You can choose the select mode (default is charwise 'v')
-          --
-          -- Can also be a function which gets passed a table with the keys
-          -- * query_string: eg '@function.inner'
-          -- * method: eg 'v' or 'o'
-          -- and should return the mode ('v', 'V', or '<c-v>') or a table
-          -- mapping query_strings to modes.
           selection_modes = {
-            ['@parameter.outer'] = 'v', -- charwise
-            ['@function.outer'] = 'V', -- linewise
-            ['@class.outer'] = '<c-v>', -- blockwise
+            ['@parameter.outer'] = 'v',
+            ['@function.outer'] = 'V',
+            ['@class.outer'] = '<c-v>',
           },
-          -- If you set this to `true` (default is `false`) then any textobject is
-          -- extended to include preceding or succeeding whitespace. Succeeding
-          -- whitespace has priority in order to act similarly to eg the built-in
-          -- `ap`.
-          --
-          -- Can also be a function which gets passed a table with the keys
-          -- * query_string: eg '@function.inner'
-          -- * selection_mode: eg 'v'
-          -- and should return true or false
           include_surrounding_whitespace = true,
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- Save jumps in the jumplist (`<C-o>` to go back)
+          goto_next_start = {
+            [']f'] = '@function.outer',
+            [']F'] = '@function.inner',
+            [']c'] = '@class.outer',
+            [']C'] = '@class.inner',
+            [']l'] = '@loop.outer',
+            [']b'] = '@block.outer',
+            [']a'] = '@parameter.inner',
+          },
+          goto_previous_start = {
+            ['[f'] = '@function.outer',
+            ['[F'] = '@function.inner',
+            ['[c'] = '@class.outer',
+            ['[C'] = '@class.inner',
+            ['[l'] = '@loop.outer',
+            ['[b'] = '@block.outer',
+            ['[a'] = '@parameter.inner',
+          },
+          goto_next_end = {
+            [']e'] = '@function.outer',
+            [']E'] = '@class.outer',
+          },
+          goto_previous_end = {
+            ['[e'] = '@function.outer',
+            ['[E'] = '@class.outer',
+          },
         },
       },
     },
-    {
-      'nvim-treesitter/nvim-treesitter-context',
-      opts = {
-        enable = true, -- Enable this plugin (default is true)
-        max_lines = 0, -- How many lines the context window should span (0 for unlimited)
-        trim_scope = 'outer', -- Which context lines to trim (e.g., 'outer' or 'inner')
-        mode = 'cursor', -- Line used to calculate context (choices: 'cursor', 'topline')
-        separator = nil, -- Separator line (use "─" or other characters if desired)
-      },
+  },
+  { -- Treesitter Context
+    'nvim-treesitter/nvim-treesitter-context',
+    opts = {
+      enable = true,
+      max_lines = 0,
+      trim_scope = 'outer',
+      mode = 'cursor',
+      separator = nil,
     },
-
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+  { -- Register Treesitter movements in which-key
+    'folke/which-key.nvim',
+    config = function()
+      local wk = require 'which-key'
+      wk.register {
+        [']'] = {
+          name = 'Next',
+          f = { ':TSTextobjectGotoNextStart @function.outer<CR>', 'Next function' },
+          F = { ':TSTextobjectGotoNextStart @function.inner<CR>', 'Next function (inner)' },
+          c = { ':TSTextobjectGotoNextStart @class.outer<CR>', 'Next class' },
+          C = { ':TSTextobjectGotoNextStart @class.inner<CR>', 'Next class (inner)' },
+          l = { ':TSTextobjectGotoNextStart @loop.outer<CR>', 'Next loop' },
+          b = { ':TSTextobjectGotoNextStart @block.outer<CR>', 'Next block' },
+          a = { ':TSTextobjectGotoNextStart @parameter.inner<CR>', 'Next function argument' },
+          e = { ':TSTextobjectGotoNextEnd @function.outer<CR>', 'Next function end' },
+          E = { ':TSTextobjectGotoNextEnd @class.outer<CR>', 'Next class end' },
+        },
+        ['['] = {
+          name = 'Previous',
+          f = { ':TSTextobjectGotoPreviousStart @function.outer<CR>', 'Previous function' },
+          F = { ':TSTextobjectGotoPreviousStart @function.inner<CR>', 'Previous function (inner)' },
+          c = { ':TSTextobjectGotoPreviousStart @class.outer<CR>', 'Previous class' },
+          C = { ':TSTextobjectGotoPreviousStart @class.inner<CR>', 'Previous class (inner)' },
+          l = { ':TSTextobjectGotoPreviousStart @loop.outer<CR>', 'Previous loop' },
+          b = { ':TSTextobjectGotoPreviousStart @block.outer<CR>', 'Previous block' },
+          a = { ':TSTextobjectGotoPreviousStart @parameter.inner<CR>', 'Previous function argument' },
+          e = { ':TSTextobjectGotoPreviousEnd @function.outer<CR>', 'Previous function end' },
+          E = { ':TSTextobjectGotoPreviousEnd @class.outer<CR>', 'Previous class end' },
+        },
+      }
+    end,
   },
 }
--- vim: ts=2 sts=2 sw=2 et
