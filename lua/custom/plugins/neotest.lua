@@ -1,5 +1,4 @@
 return {
-
   -- Neotest setup
   {
     'nvim-neotest/neotest',
@@ -9,12 +8,12 @@ return {
       'nvim-lua/plenary.nvim',
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
-
       'nvim-neotest/neotest-plenary',
       'nvim-neotest/neotest-vim-test',
 
       {
         'fredrikaverpil/neotest-golang',
+        ft = 'go', -- Lazy load only when editing Go files
         dependencies = {
           {
             'leoluz/nvim-dap-go',
@@ -27,44 +26,34 @@ return {
     opts = function(_, opts)
       opts.adapters = opts.adapters or {}
       opts.adapters['neotest-golang'] = {
-        go_test_args = {
-          '-v',
-          '-race',
-          '-coverprofile=' .. vim.fn.getcwd() .. '/coverage.out',
-        },
+        go_test_args = { '-v', '-race', '-coverprofile=coverage.out' },
+        concurrent = true, -- Run tests in parallel
       }
+      opts.running = { concurrent = true } -- Ensures multiple tests run in parallel
+      opts.status = { virtual_text = false } -- Reduce UI updates
+      opts.output = { open_on_run = false } -- Prevent auto-opening output
     end,
     config = function(_, opts)
-      if opts.adapters then
-        local adapters = {}
-        for name, config in pairs(opts.adapters or {}) do
-          if type(name) == 'number' then
-            if type(config) == 'string' then
-              config = require(config)
+      local neotest = require 'neotest'
+      local adapters = {}
+
+      -- Efficiently load adapters
+      for name, config in pairs(opts.adapters or {}) do
+        if config ~= false then
+          local adapter = require(name)
+          if type(config) == 'table' and not vim.tbl_isempty(config) then
+            if adapter.setup then
+              adapter.setup(config)
+            else
+              adapter(config)
             end
-            adapters[#adapters + 1] = config
-          elseif config ~= false then
-            local adapter = require(name)
-            if type(config) == 'table' and not vim.tbl_isempty(config) then
-              local meta = getmetatable(adapter)
-              if adapter.setup then
-                adapter.setup(config)
-              elseif adapter.adapter then
-                adapter.adapter(config)
-                adapter = adapter.adapter
-              elseif meta and meta.__call then
-                adapter(config)
-              else
-                error('Adapter ' .. name .. ' does not support setup')
-              end
-            end
-            adapters[#adapters + 1] = adapter
           end
+          table.insert(adapters, adapter)
         end
-        opts.adapters = adapters
       end
 
-      require('neotest').setup(opts)
+      opts.adapters = adapters
+      neotest.setup(opts)
     end,
     keys = {
       {
@@ -140,7 +129,7 @@ return {
       {
         '<leader>td',
         function()
-          require('neotest').run.run { suite = false, strategy = 'dap' }
+          require('neotest').run.run { strategy = 'dap' }
         end,
         desc = 'Debug nearest test',
       },
@@ -154,7 +143,7 @@ return {
     },
   },
 
-  -- DAP setup
+  -- DAP setup (debugging)
   {
     'mfussenegger/nvim-dap',
     event = 'VeryLazy',
@@ -178,21 +167,7 @@ return {
         function()
           require('dap').continue()
         end,
-        desc = '[d]ebug [c]ontinue (start here)',
-      },
-      {
-        '<leader>dC',
-        function()
-          require('dap').run_to_cursor()
-        end,
-        desc = '[d]ebug [C]ursor',
-      },
-      {
-        '<leader>dg',
-        function()
-          require('dap').goto_()
-        end,
-        desc = '[d]ebug [g]o to line',
+        desc = '[d]ebug [c]ontinue',
       },
       {
         '<leader>do',
@@ -216,27 +191,6 @@ return {
         desc = '[d]ebug [i]nto',
       },
       {
-        '<leader>dj',
-        function()
-          require('dap').down()
-        end,
-        desc = '[d]ebug [j]ump down',
-      },
-      {
-        '<leader>dk',
-        function()
-          require('dap').up()
-        end,
-        desc = '[d]ebug [k]ump up',
-      },
-      {
-        '<leader>dl',
-        function()
-          require('dap').run_last()
-        end,
-        desc = '[d]ebug [l]ast',
-      },
-      {
         '<leader>dp',
         function()
           require('dap').pause()
@@ -251,32 +205,11 @@ return {
         desc = '[d]ebug [r]epl',
       },
       {
-        '<leader>dR',
-        function()
-          require('dap').clear_breakpoints()
-        end,
-        desc = '[d]ebug [R]emove breakpoints',
-      },
-      {
-        '<leader>ds',
-        function()
-          require('dap').session()
-        end,
-        desc = '[d]ebug [s]ession',
-      },
-      {
         '<leader>dt',
         function()
           require('dap').terminate()
         end,
         desc = '[d]ebug [t]erminate',
-      },
-      {
-        '<leader>dw',
-        function()
-          require('dap.ui.widgets').hover()
-        end,
-        desc = '[d]ebug [w]idgets',
       },
     },
   },
@@ -291,26 +224,24 @@ return {
     },
     opts = {},
     config = function(_, opts)
-      -- setup dap config by VsCode launch.json file
-      -- require("dap.ext.vscode").load_launchjs()
-      local dap = require 'dap'
-      local dapui = require 'dapui'
+      local dap, dapui = require 'dap', require 'dapui'
       dapui.setup(opts)
+
       dap.listeners.after.event_initialized['dapui_config'] = function()
-        dapui.open {}
+        dapui.open()
       end
       dap.listeners.before.event_terminated['dapui_config'] = function()
-        dapui.close {}
+        dapui.close()
       end
       dap.listeners.before.event_exited['dapui_config'] = function()
-        dapui.close {}
+        dapui.close()
       end
     end,
     keys = {
       {
         '<leader>du',
         function()
-          require('dapui').toggle {}
+          require('dapui').toggle()
         end,
         desc = '[d]ap [u]i',
       },
@@ -323,8 +254,7 @@ return {
       },
     },
   },
-  {
-    'theHamsta/nvim-dap-virtual-text',
-    opts = {},
-  },
+
+  -- DAP Virtual Text (Inline Debugging)
+  { 'theHamsta/nvim-dap-virtual-text', opts = {} },
 }
