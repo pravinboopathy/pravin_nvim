@@ -1,4 +1,3 @@
-local omnisharp = require 'mason-lspconfig.server_configurations.omnisharp'
 -- LSP Plugins
 return {
   {
