@@ -98,6 +98,7 @@ return {
               buffer = '[Buffer]',
               path = '[Path]',
               copilot = '[Copilot]',
+              neorg = '[Neorg]',
             })[entry.source.name]
             return vim_item
           end,
@@ -107,6 +108,7 @@ return {
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'copilot', group_index = 2 },
+          { name = 'neorg' },
         },
       }
     end,

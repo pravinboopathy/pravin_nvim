@@ -211,6 +211,18 @@ return {
             },
           },
         },
+        yamlls = {
+          settings = {
+            yaml = {
+              validate = true,
+              -- Example schema configuration:
+              schemas = {
+                ['https://json.schemastore.org/github-workflow.json'] = '/.github/workflows/*',
+                -- You can add more schemas here as needed.
+              },
+            },
+          },
+        },
       }
 
       -- Ensure the servers and tools above are installed

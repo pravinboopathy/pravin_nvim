@@ -41,32 +41,23 @@ vim.api.nvim_set_keymap('n', '<C-_>', ':split<CR>', { noremap = true, silent = t
 -- Quickfix and Location List Key Mappings for Neovim
 -- These mappings use Lua API for better maintainability
 
+-- Function to prompt and jump to quickfix entry
+local function jump_to_qf_entry()
+  vim.ui.input({ prompt = 'Quickfix entry number: ' }, function(input)
+    if input and tonumber(input) then
+      vim.cmd('cc ' .. input)
+    else
+      vim.notify('Invalid quickfix entry number', vim.log.levels.WARN)
+    end
+  end)
+end
 -- Quickfix Mappings
 local quickfix_mappings = {
   { mode = 'n', lhs = '<leader>qo', rhs = ':copen<CR>', desc = 'Open Quickfix List' },
   { mode = 'n', lhs = '<leader>qc', rhs = ':cclose<CR>', desc = 'Close Quickfix List' },
   { mode = 'n', lhs = '<leader>qn', rhs = ':cnext<CR>zz', desc = 'Next Quickfix Item' },
   { mode = 'n', lhs = '<leader>qp', rhs = ':cprev<CR>zz', desc = 'Previous Quickfix Item' },
-  { mode = 'n', lhs = '<leader>qf', rhs = ':cfirst<CR>', desc = 'First Quickfix Item' },
-  { mode = 'n', lhs = '<leader>ql', rhs = ':clast<CR>', desc = 'Last Quickfix Item' },
-  {
-    mode = 'n',
-    lhs = '<leader>qcl',
-    rhs = function()
-      vim.fn.setqflist {}
-    end,
-    desc = 'Clear Quickfix List',
-  },
-  { mode = 'n', lhs = '<leader>qt', rhs = ':cwindow<CR>', desc = 'Toggle Quickfix List' },
-}
-
--- Location List Mappings
-local location_list_mappings = {
-  { mode = 'n', lhs = '<leader>lo', rhs = ':lopen<CR>', desc = 'Open Location List' },
-  { mode = 'n', lhs = '<leader>lc', rhs = ':lclose<CR>', desc = 'Close Location List' },
-  { mode = 'n', lhs = '<leader>ln', rhs = ':lnext<CR>zz', desc = 'Next Location List Item' },
-  { mode = 'n', lhs = '<leader>lp', rhs = ':lprev<CR>zz', desc = 'Previous Location List Item' },
-  { mode = 'n', lhs = '<leader>lt', rhs = ':lwindow<CR>', desc = 'Toggle Location List' },
+  { mode = 'n', lhs = '<leader>qj', rhs = jump_to_qf_entry, desc = 'Jump to Quickfix Entry' },
 }
 
 -- Function to set key mappings
@@ -78,7 +69,6 @@ end
 
 -- Apply the mappings
 set_keymaps(quickfix_mappings)
-set_keymaps(location_list_mappings)
 
 -- Notes:
 -- Replace <leader> with your preferred leader key (e.g., ',' or ' ').
