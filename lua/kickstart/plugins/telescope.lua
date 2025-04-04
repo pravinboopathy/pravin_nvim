@@ -34,7 +34,6 @@ return {
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
       -- many different aspects of Neovim, your workspace, LSP, and more!
-      --
       -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
       --
@@ -52,6 +51,7 @@ return {
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local actions = require 'telescope.actions'
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -62,6 +62,18 @@ return {
         --   },
         -- },
         -- pickers = {}
+        defaults = {
+          mappings = {
+            i = {
+              ['<C-\\>'] = actions.select_vertical,
+              ['<C-_>'] = actions.select_horizontal,
+            },
+            n = {
+              ['<C-\\>'] = actions.select_vertical,
+              ['<C-_>'] = actions.select_horizontal,
+            },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
