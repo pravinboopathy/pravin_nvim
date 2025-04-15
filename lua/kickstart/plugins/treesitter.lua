@@ -100,36 +100,4 @@ return {
       separator = nil,
     },
   },
-  { -- Register Treesitter movements in which-key
-    'folke/which-key.nvim',
-    config = function()
-      local wk = require 'which-key'
-      wk.register {
-        [']'] = {
-          name = 'Next',
-          f = { ':TSTextobjectGotoNextStart @function.outer<CR>', 'Next function' },
-          F = { ':TSTextobjectGotoNextStart @function.inner<CR>', 'Next function (inner)' },
-          c = { ':TSTextobjectGotoNextStart @class.outer<CR>', 'Next class' },
-          C = { ':TSTextobjectGotoNextStart @class.inner<CR>', 'Next class (inner)' },
-          l = { ':TSTextobjectGotoNextStart @loop.outer<CR>', 'Next loop' },
-          b = { ':TSTextobjectGotoNextStart @block.outer<CR>', 'Next block' },
-          a = { ':TSTextobjectGotoNextStart @parameter.inner<CR>', 'Next function argument' },
-          e = { ':TSTextobjectGotoNextEnd @function.outer<CR>', 'Next function end' },
-          E = { ':TSTextobjectGotoNextEnd @class.outer<CR>', 'Next class end' },
-        },
-        ['['] = {
-          name = 'Previous',
-          f = { ':TSTextobjectGotoPreviousStart @function.outer<CR>', 'Previous function' },
-          F = { ':TSTextobjectGotoPreviousStart @function.inner<CR>', 'Previous function (inner)' },
-          c = { ':TSTextobjectGotoPreviousStart @class.outer<CR>', 'Previous class' },
-          C = { ':TSTextobjectGotoPreviousStart @class.inner<CR>', 'Previous class (inner)' },
-          l = { ':TSTextobjectGotoPreviousStart @loop.outer<CR>', 'Previous loop' },
-          b = { ':TSTextobjectGotoPreviousStart @block.outer<CR>', 'Previous block' },
-          a = { ':TSTextobjectGotoPreviousStart @parameter.inner<CR>', 'Previous function argument' },
-          e = { ':TSTextobjectGotoPreviousEnd @function.outer<CR>', 'Previous function end' },
-          E = { ':TSTextobjectGotoPreviousEnd @class.outer<CR>', 'Previous class end' },
-        },
-      }
-    end,
-  },
 }
