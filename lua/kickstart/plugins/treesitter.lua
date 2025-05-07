@@ -57,36 +57,6 @@ return {
           },
           include_surrounding_whitespace = true,
         },
-        move = {
-          enable = true,
-          set_jumps = true, -- Save jumps in the jumplist (`<C-o>` to go back)
-          goto_next_start = {
-            [']f'] = '@function.outer',
-            [']F'] = '@function.inner',
-            [']c'] = '@class.outer',
-            [']C'] = '@class.inner',
-            [']l'] = '@loop.outer',
-            [']b'] = '@block.outer',
-            [']a'] = '@parameter.inner',
-          },
-          goto_previous_start = {
-            ['[f'] = '@function.outer',
-            ['[F'] = '@function.inner',
-            ['[c'] = '@class.outer',
-            ['[C'] = '@class.inner',
-            ['[l'] = '@loop.outer',
-            ['[b'] = '@block.outer',
-            ['[a'] = '@parameter.inner',
-          },
-          goto_next_end = {
-            [']e'] = '@function.outer',
-            [']E'] = '@class.outer',
-          },
-          goto_previous_end = {
-            ['[e'] = '@function.outer',
-            ['[E'] = '@class.outer',
-          },
-        },
       },
     },
   },
