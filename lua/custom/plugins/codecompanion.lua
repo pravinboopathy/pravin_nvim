@@ -39,6 +39,13 @@ return {
           adapter = 'copilot_agent',
         },
       },
+      extensions = {
+        vectorcode = {
+          opts = {
+            add_tool = true,
+          },
+        },
+      },
     }
     vim.api.nvim_create_autocmd('FileType', {
       pattern = 'codecompanion',
