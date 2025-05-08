@@ -6,15 +6,37 @@ return {
   },
   config = function()
     require('codecompanion').setup {
+      adapters = {
+        copilot_agent = function()
+          return require('codecompanion.adapters').extend('copilot', {
+            name = 'copilot_agent', -- Give this adapter a different name to differentiate it from the default copilot adapter
+            schema = {
+              model = {
+                default = 'claude-3.7-sonnet-thought',
+              },
+            },
+          })
+        end,
+        copilot_chat = function()
+          return require('codecompanion.adapters').extend('copilot', {
+            name = 'copilot',
+            schema = {
+              model = {
+                default = 'gpt-4.1',
+              },
+            },
+          })
+        end,
+      },
       strategies = {
         chat = {
-          adapter = 'copilot',
+          adapter = 'copilot_chat',
         },
         inline = {
-          adapter = 'copilot',
+          adapter = 'copilot_chat',
         },
         agent = {
-          adapter = 'copilot',
+          adapter = 'copilot_agent',
         },
       },
     }
