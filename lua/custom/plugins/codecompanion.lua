@@ -41,6 +41,16 @@ return {
         },
         inline = {
           adapter = 'copilot',
+          keymaps = {
+            accept_change = {
+              modes = { n = 'ca' },
+              description = 'Accept the suggested change',
+            },
+            reject_change = {
+              modes = { n = 'cr' },
+              description = 'Reject the suggested change',
+            },
+          },
         },
         agent = {
           adapter = 'copilot_agent',
