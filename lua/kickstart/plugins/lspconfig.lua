@@ -85,25 +85,25 @@ return {
           -- Use omnisharp_extended if available
           if is_omnisharp then
             local omnisharp_ext = require 'omnisharp_extended'
-            map('grr', omnisharp_ext.telescope_lsp_references, '[G]oto [R]eferences')
-            map('grd', function()
+            map('<leader>gr', omnisharp_ext.telescope_lsp_references, '[G]oto [R]eferences')
+            map('<leader>gd', function()
               omnisharp_ext.telescope_lsp_definition { jump_type = 'vsplit' }
             end, '[G]oto [D]efinition (vsplit)')
-            map('grt', omnisharp_ext.telescope_lsp_type_definition, '[G]oto [T]ype Definition')
-            map('gri', omnisharp_ext.telescope_lsp_implementation, '[G]oto [I]mplementation')
+            map('<leader>gt', omnisharp_ext.telescope_lsp_type_definition, '[G]oto [T]ype Definition')
+            map('<leader>gi', omnisharp_ext.telescope_lsp_implementation, '[G]oto [I]mplementation')
           else
-            map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-            map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-            map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
-            map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+            map('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+            map('<leader>gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+            map('<leader>gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+            map('<leader>gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
           end
 
           -- Mappings that apply to all LSPs
-          map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
-          map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-          map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-          map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
-          map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols') -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
+          map('<leader>gn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<leader>ga', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+          map('<leader>gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('<leader>gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
+          map('<leader>gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
 
           ---@param client vim.lsp.Client
           ---@param method vim.lsp.protocol.Method
