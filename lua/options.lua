@@ -28,6 +28,7 @@ o.undofile       = true                                            -- enable/dis
 o.undolevels     = 1000                                            -- number of changes that can be undone
 o.updatetime     = 250                                             -- faster completion
 o.wrap = false -- disable line wrap
+o.conceallevel = 0 -- don't hide text
 
 o.virtualedit = "block" -- fixes stange behavior with unequal line lengths in visual block mode
 o.inccommand = "split" -- shows line number on previews
