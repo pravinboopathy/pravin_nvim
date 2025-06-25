@@ -121,9 +121,9 @@ return {
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       local extensions = require('telescope').extensions
-      vim.keymap.set('n', '<leader>sgl', extensions.git_worktree.git_worktree, { desc = '[S] Work[T]rees [L]ist' })
+      vim.keymap.set('n', '<leader>sgs', extensions.git_worktree.git_worktree, { desc = '[S] [G]it WorkTrees [S]witch' })
       -- <Enter> - switches to that wrktree
-      vim.keymap.set('n', '<leader>sgc', extensions.git_worktree.create_git_worktree, { desc = '[S] Work[T]rees [C]reate' })
+      vim.keymap.set('n', '<leader>sgl', extensions.git_worktree.create_git_worktree, { desc = '[S] [G]it WorkTrees [L]list' })
       -- <c-d> - deletes that worktree
       -- <c-f> - toggles forcing of the next deletion
 
