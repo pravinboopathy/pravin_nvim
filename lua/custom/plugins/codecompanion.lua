@@ -58,29 +58,29 @@ return {
       },
       prompt_library = {
         ['unit_test'] = {
-          strategy = 'agent',
+          strategy = 'chat',
           description = 'Generate unit tests for the current files',
           opts = {
+            is_default = true,
             is_slash_cmd = true,
+            short_name = 'unit_test',
+            adapter = {
+              name = 'copilot_agent',
+            },
           },
           context = {
-            type = 'file',
-            path = {
-              '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
+            {
+              type = 'file',
+              path = '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
             },
           },
           prompts = {
             {
-              role = 'system',
-              content = agent_prompt,
-            {
               role = 'user',
-              content = [[ 
-            When generating unit tests, follow the structure of regex_test. Importantly:
+              content = [[When generating unit tests, follow the structure of regex_test. Importantly:
             1. Use table-driven tests.
             2. Use the map of name to test case structs
-            3. Use testutils package whenever possible
-              ]],
+            3. Use testutils package whenever possible]],
               opts = {
                 contains_code = true,
               },
