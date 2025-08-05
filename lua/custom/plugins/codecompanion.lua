@@ -21,7 +21,7 @@ return {
             name = 'copilot_agent', -- Give this adapter a different name to differentiate it from the default copilot adapter
             schema = {
               model = {
-                default = 'claude-3.7-sonnet-thought',
+                default = 'claude-sonnet-4',
               },
             },
           })
