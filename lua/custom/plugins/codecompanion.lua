@@ -70,15 +70,20 @@ return {
             },
           },
           prompts = {
-            role = 'user',
-            content = [[ 
+            {
+              role = 'system',
+              content = agent_prompt,
+            {
+              role = 'user',
+              content = [[ 
             When generating unit tests, follow the structure of regex_test. Importantly:
             1. Use table-driven tests.
             2. Use the map of name to test case structs
             3. Use testutils package whenever possible
               ]],
-            opts = {
-              contains_code = true,
+              opts = {
+                contains_code = true,
+              },
             },
           },
         },
