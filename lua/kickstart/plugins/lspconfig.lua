@@ -77,27 +77,6 @@ return {
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-
-          -- Determine if we are in a C# buffer with Omnisharp
-          local is_omnisharp = client and client.name == 'omnisharp'
-
-          -- Use omnisharp_extended if available
-          if is_omnisharp then
-            local omnisharp_ext = require 'omnisharp_extended'
-            map('<leader>gr', omnisharp_ext.telescope_lsp_references, '[G]oto [R]eferences')
-            map('<leader>gd', function()
-              omnisharp_ext.telescope_lsp_definition { jump_type = 'vsplit' }
-            end, '[G]oto [D]efinition (vsplit)')
-            map('<leader>gt', omnisharp_ext.telescope_lsp_type_definition, '[G]oto [T]ype Definition')
-            map('<leader>gi', omnisharp_ext.telescope_lsp_implementation, '[G]oto [I]mplementation')
-          else
-            map('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-            map('<leader>gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-            map('<leader>gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
-            map('<leader>gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-          end
-
           -- Mappings that apply to all LSPs
           map('<leader>gn', vim.lsp.buf.rename, '[R]e[n]ame')
           map('<leader>ga', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
