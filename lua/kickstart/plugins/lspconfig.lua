@@ -67,6 +67,8 @@ return {
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
+          -- vim.notify 'Global LspAttach autocmd ran'
+
           -- NOTE: Remember that Lua is a real programming language, and as such it is possible
           -- to define small helper and utility functions so you don't have to repeat yourself.
           --
@@ -78,6 +80,11 @@ return {
           end
 
           -- Mappings that apply to all LSPs
+          map('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('<leader>gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('<leader>gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+          map('<leader>gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
           map('<leader>gn', vim.lsp.buf.rename, '[R]e[n]ame')
           map('<leader>ga', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
           map('<leader>gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -177,6 +184,7 @@ return {
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      --
 
       local servers = {
         -- clangd = {},
@@ -187,13 +195,22 @@ return {
             },
           },
         },
-        omnisharp = {
-          settings = {
-            omnisharp = {
-              enableDecompilationSupport = true,
+        omnisharp = (function()
+          local omnisharp_path = vim.fn.exepath 'omnisharp'
+          return {
+            cmd = {
+              omnisharp_path,
+              '--languageserver',
+              '--hostPID',
+              tostring(vim.fn.getpid()),
             },
-          },
-        },
+            settings = {
+              omnisharp = {
+                enableDecompilationSupport = true,
+              },
+            },
+          }
+        end)(),
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
