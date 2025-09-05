@@ -8,27 +8,15 @@ local map = function(keys, func, desc)
   vim.keymap.set('n', keys, func, { buffer = true, desc = desc })
 end
 
--- Import omnisharp extension module safely
-local ok, omnisharp_ext = pcall(require, 'omnisharp_extended')
-if not ok or type(omnisharp_ext) ~= 'table' then
-  return
-end
-
 -- Override keybindings (check for existence before mapping)
-if type(omnisharp_ext.telescope_lsp_references) == 'function' then
-  map('<leader>gr', omnisharp_ext.telescope_lsp_references, '[G]oto [R]eferences')
-end
-
-if type(omnisharp_ext.telescope_lsp_definition) == 'function' then
-  map('<leader>gd', function()
-    omnisharp_ext.telescope_lsp_definition { jump_type = 'vsplit' }
-  end, '[G]oto [D]efinition (vsplit)')
-end
-
-if type(omnisharp_ext.telescope_lsp_type_definition) == 'function' then
-  map('<leader>gt', omnisharp_ext.telescope_lsp_type_definition, '[G]oto [T]ype Definition')
-end
-
-if type(omnisharp_ext.telescope_lsp_implementation) == 'function' then
-  map('<leader>gi', omnisharp_ext.telescope_lsp_implementation, '[G]oto [I]mplementation')
-end
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    -- vim.notify 'C# ftplugin LspAttach autocmd ran'
+    local omnisharp_ext = require 'omnisharp_extended'
+    vim.keymap.set('n', '<leader>gr', omnisharp_ext.telescope_lsp_references, { buffer = args.buf, desc = '[G]oto [R]eferences' })
+    vim.keymap.set('n', '<leader>gd', omnisharp_ext.telescope_lsp_definition, { buffer = args.buf, desc = '[G]oto [D]efinition(OmniSharp Extended)' })
+    vim.keymap.set('n', '<leader>gt', omnisharp_ext.telescope_lsp_type_definition, { buffer = args.buf, desc = '[G]oto [T]ype Definition' })
+    vim.keymap.set('n', '<leader>gi', omnisharp_ext.telescope_lsp_implementation, { buffer = args.buf, desc = '[G]oto [I]mplementation' })
+    vim.keymap.set('n', 'gd', omnisharp_ext.lsp_definition, { buffer = args.buf, desc = '[G]oto [D]efinition(OmniSharp Extended)' })
+  end,
+})
