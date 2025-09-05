@@ -71,7 +71,11 @@ return {
           context = {
             {
               type = 'file',
-              path = '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
+              path = {
+                '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
+                '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/comparison.go',
+                '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/error_handling.go',
+              },
             },
           },
           prompts = {
@@ -80,7 +84,46 @@ return {
               content = [[When generating unit tests, follow the structure of regex_test. Importantly:
             1. Use table-driven tests.
             2. Use the map of name to test case structs
-            3. Use testutils package whenever possible]],
+            3. Use testutil package whenever possible
+            4. When naming variables representing expected output, use naming convention "exp{var}". Don't use "want{var}. For example, compare "expResp" against "gotResp"
+            Also note, the import path for the testutil package is "go.eccp.epic.com/tenuki/testutil"]],
+              opts = {
+                contains_code = true,
+              },
+            },
+          },
+        },
+        -- TODO: add prompt pre mr subimission that makes sure all exported structs are documented and all tests use conform to unit test expectations. Can use vectorcode for providing context
+        ['ready_for_pqa'] = {
+          strategy = 'chat',
+          description = "Get's project in a state that is ready for PQA",
+          opts = {
+            is_default = true,
+            is_slash_cmd = true,
+            short_name = 'ready_for_pqa',
+            adapter = {
+              name = 'copilot_agent',
+            },
+          },
+          context = {
+            {
+              type = 'file',
+              path = {
+                '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
+                '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/comparison.go',
+                '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/error_handling.go',
+              },
+            },
+          },
+          prompts = {
+            {
+              role = 'user',
+              content = [[When generating unit tests, follow the structure of regex_test. Importantly:
+            1. Use table-driven tests.
+            2. Use the map of name to test case structs
+            3. Use testutil package whenever possible
+            4. When naming variables representing expected output, use naming convention "exp{var}". Don't use "want{var}. For example, compare "expResp" against "gotResp"
+            Also note, the import path for the testutil package is "go.eccp.epic.com/tenuki/testutil"]],
               opts = {
                 contains_code = true,
               },
