@@ -22,12 +22,33 @@ return {
         },
         branch = 'main',
       },
+      {
+        'Issafalcon/neotest-dotnet',
+        ft = { 'cs', 'fs', 'vb' }, -- Lazy load for C#, F#, VB files
+        branch = 'main',
+      },
     },
     opts = function(_, opts)
       opts.adapters = opts.adapters or {}
       opts.adapters['neotest-golang'] = {
         go_test_args = { '-v', '-race', '-coverprofile=coverage.out' },
         concurrent = true, -- Run tests in parallel
+      }
+      opts.adapters['neotest-dotnet'] = {
+        -- Tell neotest-dotnet to use either solution (requires .sln file) or project (requires .csproj or .fsproj file) as project root
+        -- Note: If neovim is opened from the solution root, using the 'project' setting may sometimes find all nested projects, however,
+        --       to locate all test projects in the solution more reliably (if a .sln file is present) then 'solution' is better.
+        discovery_root = 'solution',
+        dotnet_additional_args = {
+          '--verbosity detailed',
+        },
+        dap = {
+          -- Extra arguments for nvim-dap configuration
+          -- See https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for values
+          args = { justMyCode = false },
+          -- Enter the name of your dap adapter, the default value is netcoredbg
+          adapter_name = 'netcoredbg',
+        },
       }
       opts.running = { concurrent = true } -- Ensures multiple tests run in parallel
       opts.status = { virtual_text = false } -- Reduce UI updates
