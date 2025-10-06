@@ -11,7 +11,6 @@ return {
           config = {
             workspaces = {
               notes = '~/notes',
-              project_notes = '~/project_notes',
             },
             default_workspace = 'notes',
           },
@@ -22,6 +21,13 @@ return {
         ['core.export.markdown'] = {
           config = {
             extensions = 'all',
+          },
+        },
+        ['core.journal'] = {
+          config = {
+            journal_folder = 'journal',
+            strategy = 'flat',
+            workspace = 'notes',
           },
         },
       },
