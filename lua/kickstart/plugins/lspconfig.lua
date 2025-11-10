@@ -23,7 +23,7 @@ return {
       'williamboman/mason-lspconfig.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- keep nvim cmp to work with copilot-cmp
       'hrsh7th/cmp-nvim-lsp',
@@ -276,7 +276,7 @@ return {
       -- Manually configure each server using lspconfig
       for server_name, server_config in pairs(servers) do
         server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
-        require('lspconfig')[server_name].setup(server_config)
+        vim.lsp.config(server_name, server_config)
       end
     end,
   },
