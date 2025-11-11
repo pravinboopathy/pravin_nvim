@@ -17,9 +17,9 @@ return {
     require('codecompanion').setup {
       adapters = {
         http = {
-          copilot_agent = function()
+          claude = function()
             return require('codecompanion.adapters').extend('copilot', {
-              name = 'copilot_agent', -- Give this adapter a different name to differentiate it from the default copilot adapter
+              name = 'claude', -- Give this adapter a different name to differentiate it from the default copilot adapter
               schema = {
                 model = {
                   default = 'claude-sonnet-4.5',
@@ -63,11 +63,32 @@ return {
             },
           },
         },
-        agent = {
-          adapter = 'copilot_agent',
-        },
       },
       prompt_library = {
+        ['refactor'] = {
+          strategy = 'chat',
+          description = 'Generate unit tests for the current files',
+          opts = {
+            is_default = true,
+            is_slash_cmd = true,
+            short_name = 'unit_test',
+            adapter = {
+              name = 'claude',
+            },
+          },
+          prompts = { -- TODO: provide refactor as a tool to agent, and have it chain with re-running unit tests
+            {
+              role = 'user',
+              content = [[
+              Refactor the following code to align with best practices and principles outlined in the book Clean Code by Robert C. Martin. Focus on improving readability, maintainability, and efficiency while ensuring the following principles are applied:
+              Refactor the code while preserving its original functionality
+              ]],
+              opts = {
+                contains_code = true,
+              },
+            },
+          },
+        },
         ['unit_test'] = {
           strategy = 'chat',
           description = 'Generate unit tests for the current files',
@@ -76,13 +97,13 @@ return {
             is_slash_cmd = true,
             short_name = 'unit_test',
             adapter = {
-              name = 'copilot_agent',
+              name = 'claude',
             },
           },
           context = {
             {
               type = 'file',
-              path = {
+              path = { --TODO: update these file paths, survivor should be relative to main and need to clone tenuki-go
                 '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
                 '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/comparison.go',
                 '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/error_handling.go',
@@ -113,13 +134,13 @@ return {
             is_slash_cmd = true,
             short_name = 'ready_for_pqa',
             adapter = {
-              name = 'copilot_agent',
+              name = 'claude',
             },
           },
           context = {
             {
               type = 'file',
-              path = {
+              path = { --TODO: update these file paths, survivor should be relative to main and need to clone tenuki-go
                 '/Users/pboopath/cloudlab/apps/kepler/services/survivor/gprc_survivor_client/internal/probe/regex_test.go',
                 '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/comparison.go',
                 '/Users/pboopath/cloudlab/apps/core/lib/tenuki-go/main/testutil/error_handling.go',
@@ -129,12 +150,9 @@ return {
           prompts = {
             {
               role = 'user',
-              content = [[When generating unit tests, follow the structure of regex_test. Importantly:
-            1. Use table-driven tests.
-            2. Use the map of name to test case structs
-            3. Use testutil package whenever possible
-            4. When naming variables representing expected output, use naming convention "exp{var}". Don't use "want{var}. For example, compare "expResp" against "gotResp"
-            Also note, the import path for the testutil package is "go.eccp.epic.com/tenuki/testutil"]],
+              content = [[
+              TODO: add prompt, have agent run go over added code, point out any obvious refactors(->use refactor tool if accept refactor), remove any added code, then run make and make sure passes
+              ]],
               opts = {
                 contains_code = true,
               },
