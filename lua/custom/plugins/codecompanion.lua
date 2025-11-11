@@ -16,16 +16,27 @@ return {
   config = function()
     require('codecompanion').setup {
       adapters = {
-        copilot_agent = function()
-          return require('codecompanion.adapters').extend('copilot', {
-            name = 'copilot_agent', -- Give this adapter a different name to differentiate it from the default copilot adapter
-            schema = {
-              model = {
-                default = 'claude-sonnet-4.5',
+        http = {
+          copilot_agent = function()
+            return require('codecompanion.adapters').extend('copilot', {
+              name = 'copilot_agent', -- Give this adapter a different name to differentiate it from the default copilot adapter
+              schema = {
+                model = {
+                  default = 'claude-sonnet-4.5',
+                },
               },
-            },
-          })
-        end,
+            })
+          end,
+        },
+        acp = {
+          codex = function()
+            return require('codecompanion.adapters').extend('codex', {
+              defaults = {
+                auth_method = 'chatgpt', -- "openai-api-key"|"codex-api-key"|"chatgpt"
+              },
+            })
+          end,
+        },
       },
       strategies = {
         chat = {
