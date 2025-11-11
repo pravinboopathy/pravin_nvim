@@ -36,7 +36,7 @@ vim.keymap.set({ 'n', 'v' }, '<leader>e', 'g_', { noremap = true, silent = true 
 vim.api.nvim_set_keymap('n', '<C-\\>', ':vsplit<CR>', { noremap = true, silent = true })
 
 -- Map Ctrl+- to vertical split
-vim.api.nvim_set_keymap('n', '<C-_>', ':split<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-->', ':split<CR>', { noremap = true, silent = true })
 
 -- Quickfix and Location List Key Mappings for Neovim
 -- These mappings use Lua API for better maintainability
