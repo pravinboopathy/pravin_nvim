@@ -159,6 +159,7 @@ return {
             },
           },
         },
+        -- TODO: add "vibe" prompt, scaffolds project idea, then starts building. Should save sesssion data.
       },
       extensions = {
         vectorcode = {
