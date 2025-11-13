@@ -12,6 +12,8 @@ return {
       org_agenda_files = '~/orgfiles/**/*',
       org_default_notes_file = '~/orgfiles/refile.org',
       org_startup_folded = 'inherit',
+      org_todo_keywords = { 'TODO(t)', 'IN_PROGRESS(i)', '|', 'DONE' },
+      org_cycle_separator_lines = 1,
       org_capture_templates = {
         t = {
           description = 'Task',
@@ -23,6 +25,11 @@ return {
           target = '~/orgfiles/projects.org',
           headline = 'Projects',
           template = '** %^{Project Title} :%^{Size|small|small,medium,large}:%^{Type|startup|satartup,side-project,open-source-contribution}:\n%u\n%?',
+        },
+      },
+      mappings = {
+        global = {
+          -- org_todo = '<C-Space>',
         },
       },
     }
