@@ -149,6 +149,10 @@ return {
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      vim.keymap.set('n', '<leader>sc', function()
+        builtin.find_files { cwd = vim.env.XDG_CONFIG_HOME or (vim.env.HOME .. '/.config') }
+      end, { desc = '[S]earch [C]onfig files' })
     end,
   },
 }
