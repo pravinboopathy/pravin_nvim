@@ -14,6 +14,15 @@ return {
     'nvim-treesitter/nvim-treesitter',
   },
   config = function()
+    -- Determine adapter based on USER environment variable
+    local user = os.getenv 'USER'
+
+    -- Customize per user (example)
+    local default_adapter = 'claude_code'
+    if user == 'pboopath' then
+      default_adapter = 'copilot'
+    end
+
     require('codecompanion').setup {
       adapters = {
         http = {
@@ -36,11 +45,18 @@ return {
               },
             })
           end,
+          claude_code = function()
+            return require('codecompanion.adapters').extend('claude_code', {
+              env = {
+                CLAUDE_CODE_OAUTH_TOKEN = os.getenv 'CLAUDE_CODE_OAUTH_TOKEN',
+              },
+            })
+          end,
         },
       },
       strategies = {
         chat = {
-          adapter = 'copilot',
+          adapter = default_adapter,
           tools = {
             groups = {
               ['full_stack_dev'] = {
@@ -51,7 +67,7 @@ return {
           },
         },
         inline = {
-          adapter = 'copilot',
+          adapter = default_adapter,
           keymaps = {
             accept_change = {
               modes = { n = 'ca' },
