@@ -204,6 +204,8 @@ return {
               '--hostPID',
               tostring(vim.fn.getpid()),
             },
+            -- Allow projects without a nearby .sln/.csproj by falling back to .git
+            root_markers = { '*.sln', '*.csproj', 'global.json', 'omnisharp.json', '.git' },
             settings = {
               omnisharp = {
                 enableDecompilationSupport = true,
@@ -273,11 +275,21 @@ return {
         automatic_enable = false,
       }
 
-      -- Manually configure each server using lspconfig
+      -- Share capabilities across all servers (cmp, etc.)
+      vim.lsp.config('*', {
+        capabilities = capabilities,
+      })
+
+      -- Configure each server with vim.lsp.config (new 0.11+ API)
       for server_name, server_config in pairs(servers) do
-        server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {})
+        if server_config.capabilities then
+          server_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities)
+        end
         vim.lsp.config(server_name, server_config)
       end
+
+      -- Enable all configured servers so they attach on FileType
+      vim.lsp.enable(ensure_installed)
     end,
   },
 }
