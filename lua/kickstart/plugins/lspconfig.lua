@@ -215,7 +215,6 @@ return {
         end)(),
         pyright = {},
         rust_analyzer = {},
-        sourcekit = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -291,6 +290,20 @@ return {
 
       -- Enable all configured servers so they attach on FileType
       vim.lsp.enable(ensure_installed)
+
+      -- Configure SourceKit-LSP manually (not available in Mason)
+      vim.lsp.config('sourcekit', {
+        cmd = { 'sourcekit-lsp' },
+        root_markers = {
+          '*.xcodeproj',
+          'Package.swift',
+          'compile_commands.json',
+          '.sourcekit-lsp',
+          '.git',
+        },
+        capabilities = capabilities,
+      })
+      vim.lsp.enable 'sourcekit'
     end,
   },
 }
