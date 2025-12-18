@@ -1,48 +1,40 @@
 -- Lua
 return {
-  'pocco81/true-zen.nvim',
+  -- Replace true-zen with zen-mode
+  'folke/zen-mode.nvim',
   opts = {
-    integrations = {
-      tmux = true,
+    window = {
+      -- adjust these to taste
+      backdrop = 0.95,
+      width = 0.6,  -- can be absolute number or float (percentage of width)
+      height = 0.9, -- can be absolute number or float
+      options = {
+        signcolumn = "no",
+        number = false,
+        relativenumber = false,
+        cursorline = false,
+        cursorcolumn = false,
+        foldcolumn = "0",
+        list = false,
+      },
+    },
+    plugins = {
+      -- this is the tmux integration you had before
+      tmux = { enabled = true },
+      -- other optional integrations
+      gitsigns = { enabled = true },
+      twilight = { enabled = false }, -- if you use folke/twilight.nvim
     },
   },
-  config = function(_plugin, opts)
-    require('true-zen').setup(opts)
+  config = function(_, opts)
+    require('zen-mode').setup(opts)
   end,
   keys = {
     {
-      '<leader>zn',
-      '<cmd>TZNarrow<cr>',
-      mode = 'n',
-      desc = 'Narrow focused',
-      noremap = true,
-    },
-    {
-      '<leader>zn',
-      "<cmd>'<,'>TZNarrow<cr>",
-      mode = 'v',
-      desc = 'Ranged narrow focused',
-      noremap = true,
-    },
-    {
       '<leader>zf',
-      '<cmd>TZFocus<cr>',
+      function() require('zen-mode').toggle() end,
       mode = 'n',
-      desc = 'Focued mode',
-      noremap = true,
-    },
-    {
-      '<leader>zm',
-      '<cmd>TZMinimalist<cr>',
-      mode = 'n',
-      desc = 'Minimalist mode',
-      noremap = true,
-    },
-    {
-      '<leader>za',
-      '<cmd>TZAtaraxis<cr>',
-      mode = 'n',
-      desc = 'Ataraxis mode',
+      desc = 'Focued mode (ZenMode)',
       noremap = true,
     },
   },
