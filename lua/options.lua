@@ -35,4 +35,9 @@ o.virtualedit = "block" -- fixes stange behavior with unequal line lengths in vi
 o.inccommand = "split" -- shows line number on previews
 o.termguicolors = true -- enables wider variety of colors
 o.updatetime = 100 -- faster completion
+
+o.confirm = true -- prompt before closing unsaved buffers
+o.breakindent = true -- wrapped lines maintain indentation
+o.list = true -- show whitespace characters
+o.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 -- stylua: ignore end
