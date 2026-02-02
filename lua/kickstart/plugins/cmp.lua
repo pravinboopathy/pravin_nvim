@@ -1,6 +1,7 @@
 return {
-  { -- Autocompletion
+  { -- Autocompletion (disabled - using blink.cmp instead)
     'hrsh7th/nvim-cmp',
+    enabled = false,
     event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
