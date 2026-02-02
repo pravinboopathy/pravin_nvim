@@ -16,7 +16,6 @@ return {
           },
         },
         ['core.summary'] = {},
-        ['core.integrations.nvim-cmp'] = {},
         ['core.export'] = {},
         ['core.export.markdown'] = {
           config = {
