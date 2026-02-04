@@ -1,5 +1,31 @@
 local M = {}
 
+local LAST_RUN_FILE = vim.fn.expand('~/orgfiles/agenda/.last_run')
+
+function M._get_last_run_date()
+  if vim.fn.filereadable(LAST_RUN_FILE) == 1 then
+    local lines = vim.fn.readfile(LAST_RUN_FILE)
+    if #lines > 0 and lines[1]:match('%d%d%d%d%-%d%d%-%d%d') then
+      return lines[1]
+    end
+  end
+  -- Default to yesterday if no last run
+  return os.date('%Y-%m-%d', os.time() - 86400)
+end
+
+function M._save_last_run_date(date)
+  vim.fn.mkdir(vim.fn.fnamemodify(LAST_RUN_FILE, ':h'), 'p')
+  vim.fn.writefile({ date }, LAST_RUN_FILE)
+end
+
+function M._days_between(date1, date2)
+  local y1, m1, d1 = date1:match('(%d+)-(%d+)-(%d+)')
+  local y2, m2, d2 = date2:match('(%d+)-(%d+)-(%d+)')
+  local t1 = os.time({ year = tonumber(y1), month = tonumber(m1), day = tonumber(d1) })
+  local t2 = os.time({ year = tonumber(y2), month = tonumber(m2), day = tonumber(d2) })
+  return math.floor((t2 - t1) / 86400)
+end
+
 -- Build lookup table: { [category] = { [title] = { ancestors = {...} } } }
 function M._build_headline_index()
   local Files = require('orgmode.files')
@@ -83,14 +109,14 @@ function M._add_hierarchy(lines, index)
   return result
 end
 
-function M._capture_agenda_async(start_day, filter_fn, callback)
+function M._capture_agenda_async(start_day, span, filter_fn, callback)
   local cfg = require('orgmode.config')
   local org = require('orgmode')
 
   -- Save and set config
   local orig_span = cfg.opts.org_agenda_span
   local orig_start = cfg.opts.org_agenda_start_day
-  cfg.opts.org_agenda_span = 'day'
+  cfg.opts.org_agenda_span = span or 'day'
   cfg.opts.org_agenda_start_day = start_day
 
   -- Open agenda
@@ -127,19 +153,21 @@ function M.export(opts)
   local date = opts.date or os.date('%Y-%m-%d')
   local output_path = opts.output or ('agenda/' .. date .. '.org')
 
-  -- Calculate yesterday's date for display
-  local year, month, day = date:match('(%d+)-(%d+)-(%d+)')
-  local timestamp = os.time({ year = tonumber(year), month = tonumber(month), day = tonumber(day) })
-  local yesterday = os.date('%Y-%m-%d', timestamp - 86400)
+  -- Get last run date and calculate span for completed section
+  local last_run = M._get_last_run_date()
+  local days_back = M._days_between(last_run, date)
+  -- Ensure at least 1 day, cap at 14 to avoid huge spans
+  days_back = math.max(1, math.min(days_back, 14))
 
   -- Build headline index for hierarchy lookup
   local index = M._build_headline_index()
 
-  -- Chain: get yesterday's completed, then today's agenda, then write
-  M._capture_agenda_async('-1d', function(line)
+  -- Chain: get completed since last run, then today's agenda, then write
+  local start_offset = string.format('-%dd', days_back)
+  M._capture_agenda_async(start_offset, days_back, function(line)
     return line:match('%sDONE%s')
   end, function(completed)
-    M._capture_agenda_async(nil, nil, function(today_lines)
+    M._capture_agenda_async(nil, 'day', nil, function(today_lines)
       -- Add hierarchy to lines
       today_lines = M._add_hierarchy(today_lines, index)
       completed = M._add_hierarchy(completed, index)
@@ -154,7 +182,10 @@ function M.export(opts)
 
       -- Add completed section
       table.insert(output, '')
-      table.insert(output, 'Completed (' .. yesterday .. '):')
+      local completed_label = days_back == 1
+        and string.format('Completed (%s):', last_run)
+        or string.format('Completed (since %s):', last_run)
+      table.insert(output, completed_label)
       if #completed == 0 then
         table.insert(output, '  No tasks were completed.')
       else
@@ -164,6 +195,10 @@ function M.export(opts)
       -- Write to file
       vim.fn.mkdir(vim.fn.fnamemodify(output_path, ':h'), 'p')
       vim.fn.writefile(output, output_path)
+
+      -- Save this run date
+      M._save_last_run_date(date)
+
       print('Wrote agenda to ' .. output_path)
     end)
   end)
