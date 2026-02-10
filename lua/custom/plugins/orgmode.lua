@@ -35,7 +35,7 @@ return {
           template = '** %^{Project Title} :%^{Size|small|small,medium,large}:%^{Type|startup|startup,side-project,open-source-contribution}:\n%u\n%?',
         },
       },
-      win_split_mode = 'vertical',
+      win_split_mode = 'float',
       mappings = {
         global = {
           org_refile = false,

@@ -1,6 +1,5 @@
 return {
   'iamcco/markdown-preview.nvim',
-  cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
   build = 'cd app && yarn install',
   config = function()
     -- Set to 1 to auto-start the preview when entering a Markdown buffer
