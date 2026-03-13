@@ -89,7 +89,9 @@ function M._add_hierarchy(lines, index)
       -- Format: "Scheduled: TODO title" or "Sched. 1x: WAITING title"
       local title = rest:match('[A-Z]+%s+(.+)$') or rest:match(':%s+(.+)$')
       if title then
-        local entry = index[category][title]
+        -- Strip priority cookie [#X] for index lookup (orgmode's get_title() excludes it)
+        local lookup_title = title:gsub('^%[#[A-Z]%]%s*', '')
+        local entry = index[category][lookup_title]
         if entry and #entry.ancestors > 0 then
           -- Insert hierarchy before the title
           local hierarchy = table.concat(entry.ancestors, ' > ') .. ' > '
