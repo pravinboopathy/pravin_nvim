@@ -124,30 +124,52 @@ function M._capture_agenda_async(start_day, span, filter_fn, callback)
   -- Open agenda
   org.action('agenda.agenda')
 
-  -- Wait for render then capture
-  vim.defer_fn(function()
-    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  -- Poll for agenda buffer instead of fixed delay
+  local attempts = 0
+  local function try_capture()
+    attempts = attempts + 1
 
-    -- Close agenda buffer
-    vim.cmd('bdelete')
-
-    -- Restore config
-    cfg.opts.org_agenda_span = orig_span
-    cfg.opts.org_agenda_start_day = orig_start
-
-    -- Apply filter if provided
-    if filter_fn then
-      local filtered = {}
-      for _, line in ipairs(lines) do
-        if filter_fn(line) then
-          table.insert(filtered, line)
-        end
+    -- Find agenda buffer by filetype
+    local agenda_buf = nil
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype == 'orgagenda' then
+        agenda_buf = buf
+        break
       end
-      callback(filtered)
-    else
-      callback(lines)
     end
-  end, 100)
+
+    if agenda_buf then
+      local lines = vim.api.nvim_buf_get_lines(agenda_buf, 0, -1, false)
+      vim.api.nvim_buf_delete(agenda_buf, { force = true })
+
+      -- Restore config
+      cfg.opts.org_agenda_span = orig_span
+      cfg.opts.org_agenda_start_day = orig_start
+
+      -- Apply filter if provided
+      if filter_fn then
+        local filtered = {}
+        for _, line in ipairs(lines) do
+          if filter_fn(line) then
+            table.insert(filtered, line)
+          end
+        end
+        callback(filtered)
+      else
+        callback(lines)
+      end
+    elseif attempts < 20 then
+      vim.defer_fn(try_capture, 50)
+    else
+      -- Give up after ~1s, restore config
+      cfg.opts.org_agenda_span = orig_span
+      cfg.opts.org_agenda_start_day = orig_start
+      vim.notify('DailyAgenda: failed to capture agenda buffer', vim.log.levels.WARN)
+      callback({})
+    end
+  end
+
+  vim.defer_fn(try_capture, 100)
 end
 
 function M.export(opts)
