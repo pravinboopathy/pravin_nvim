@@ -14,29 +14,11 @@ return {
     'nvim-treesitter/nvim-treesitter',
   },
   config = function()
-    -- Determine adapter based on USER environment variable
-    local user = os.getenv 'USER'
-
-    -- Customize per user (example)
+    -- Route everything through the Claude Code ACP adapter (OAuth token).
     local default_adapter = 'claude_code'
-    if user == 'pboopath' then
-      default_adapter = 'copilot'
-    end
 
     require('codecompanion').setup {
       adapters = {
-        http = {
-          claude = function()
-            return require('codecompanion.adapters').extend('copilot', {
-              name = 'claude', -- Give this adapter a different name to differentiate it from the default copilot adapter
-              schema = {
-                model = {
-                  default = 'claude-sonnet-4.5',
-                },
-              },
-            })
-          end,
-        },
         acp = {
           codex = function()
             return require('codecompanion.adapters').extend('codex', {
@@ -89,7 +71,7 @@ return {
             is_slash_cmd = true,
             short_name = 'unit_test',
             adapter = {
-              name = 'claude',
+              name = 'claude_code',
             },
           },
           prompts = { -- TODO: provide refactor as a tool to agent, and have it chain with re-running unit tests
@@ -113,7 +95,7 @@ return {
             is_slash_cmd = true,
             short_name = 'unit_test',
             adapter = {
-              name = 'claude',
+              name = 'claude_code',
             },
           },
           context = {
@@ -150,7 +132,7 @@ return {
             is_slash_cmd = true,
             short_name = 'ready_for_pqa',
             adapter = {
-              name = 'claude',
+              name = 'claude_code',
             },
           },
           context = {
