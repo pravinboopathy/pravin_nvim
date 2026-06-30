@@ -14,23 +14,30 @@ return {
     'nvim-treesitter/nvim-treesitter',
   },
   config = function()
-    -- Route everything through the Claude Code ACP adapter (OAuth token).
-    local default_adapter = 'claude_code'
+    -- Route everything through the Anthropic HTTP adapter (ANTHROPIC_API_KEY).
+    local default_adapter = 'anthropic'
 
     require('codecompanion').setup {
       adapters = {
+        http = {
+          anthropic = function()
+            return require('codecompanion.adapters').extend('anthropic', {
+              env = {
+                api_key = os.getenv 'ANTHROPIC_API_KEY',
+              },
+              schema = {
+                model = {
+                  default = 'claude-sonnet-4-5',
+                },
+              },
+            })
+          end,
+        },
         acp = {
           codex = function()
             return require('codecompanion.adapters').extend('codex', {
               defaults = {
                 auth_method = 'chatgpt', -- "openai-api-key"|"codex-api-key"|"chatgpt"
-              },
-            })
-          end,
-          claude_code = function()
-            return require('codecompanion.adapters').extend('claude_code', {
-              env = {
-                CLAUDE_CODE_OAUTH_TOKEN = os.getenv 'CLAUDE_CODE_OAUTH_TOKEN',
               },
             })
           end,
@@ -71,7 +78,7 @@ return {
             is_slash_cmd = true,
             short_name = 'unit_test',
             adapter = {
-              name = 'claude_code',
+              name = 'anthropic',
             },
           },
           prompts = { -- TODO: provide refactor as a tool to agent, and have it chain with re-running unit tests
@@ -95,7 +102,7 @@ return {
             is_slash_cmd = true,
             short_name = 'unit_test',
             adapter = {
-              name = 'claude_code',
+              name = 'anthropic',
             },
           },
           context = {
@@ -132,7 +139,7 @@ return {
             is_slash_cmd = true,
             short_name = 'ready_for_pqa',
             adapter = {
-              name = 'claude_code',
+              name = 'anthropic',
             },
           },
           context = {

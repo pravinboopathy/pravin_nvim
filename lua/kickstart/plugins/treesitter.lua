@@ -21,6 +21,8 @@ return {
         'yaml',
         'markdown',
         'markdown_inline',
+        'norg',
+        'norg_meta',
         'query',
         'vim',
         'vimdoc',
