@@ -68,6 +68,12 @@ return {
         -- },
         -- pickers = {}
         defaults = {
+          -- telescope.nvim's buffer previewer still calls the old
+          -- nvim-treesitter.parsers.ft_to_lang() API, which main-branch
+          -- nvim-treesitter dropped. Fall back to regex highlighting in
+          -- previews until telescope's 0.1.x branch picks up the fix
+          -- (upstream master already has it, in commit 0294ae3e).
+          preview = { treesitter = false },
           mappings = {
             i = {
               ['<C-\\>'] = actions.select_vertical,
