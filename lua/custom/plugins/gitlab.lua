@@ -1,5 +1,6 @@
 return {
   'harrisoncramer/gitlab.nvim',
+  enabled = false, -- requires a Go >=1.25.1 toolchain to build its companion binary; re-enable if you install one
   dependencies = {
     'MunifTanjim/nui.nvim',
     'nvim-lua/plenary.nvim',

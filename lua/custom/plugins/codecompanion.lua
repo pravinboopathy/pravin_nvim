@@ -166,13 +166,17 @@ return {
         },
         -- TODO: add "vibe" prompt, scaffolds project idea, then starts building. Should save sesssion data.
       },
-      extensions = {
-        vectorcode = {
-          opts = {
-            add_tool = true,
-          },
-        },
-      },
+      -- vectorcode extension disabled: it's force-loaded unconditionally at
+      -- startup (bypassing its own lazy `cmd` trigger) and needs the
+      -- `vectorcode` pip CLI installed, which this machine doesn't have.
+      -- Re-enable by uncommenting once `pipx install vectorcode` has been run.
+      -- extensions = {
+      --   vectorcode = {
+      --     opts = {
+      --       add_tool = true,
+      --     },
+      --   },
+      -- },
     }
     vim.api.nvim_create_autocmd('FileType', {
       pattern = 'codecompanion',

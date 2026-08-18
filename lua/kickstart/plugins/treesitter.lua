@@ -1,6 +1,7 @@
 return {
   { -- Treesitter main module
     'nvim-treesitter/nvim-treesitter',
+    branch = 'master', -- 'main' is the rewritten branch; dropped the legacy .configs API this config uses
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
     dependencies = {
@@ -21,8 +22,8 @@ return {
         'yaml',
         'markdown',
         'markdown_inline',
-        'norg',
-        'norg_meta',
+        'norg', -- norg_meta removed: not a real nvim-treesitter parser, always
+        -- fails ("Parser not available") — see neorg.lua's package.cpath fix
         'query',
         'vim',
         'vimdoc',
